@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Pesquisa de Satisfação - MAKE Distribuidora</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              make: {
+                primary: '#CBF542', // Neon Green
+                auxiliary: '#32673A', // Forest Green
+                dark: '#19241B', // Dark Background
+                surface: '#233025', // Slightly lighter surface for cards
+                textLight: '#FFFFFF',
+                textDark: '#1E1E1E', // Dark Grey for text on primary button
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            borderRadius: {
+              'xl': '0.75rem',
+              '2xl': '1rem',
+              '3xl': '1.5rem',
+            },
+            animation: {
+              'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
+              'float-up': 'floatUp 15s linear infinite', // Vertical lava lamp effect
+              'float': 'float 6s ease-in-out infinite', // Gentle hover for logo
+              'scale-in': 'scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'draw': 'draw 0.6s ease-in-out 0.3s forwards',
+            },
+            keyframes: {
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(15px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              floatUp: {
+                '0%': { transform: 'translateY(120vh) scale(0.8)', opacity: '0' },
+                '20%': { opacity: '0.8' },
+                '80%': { opacity: '0.8' },
+                '100%': { transform: 'translateY(-20vh) scale(1.2)', opacity: '0' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+              scaleIn: {
+                '0%': { opacity: '0', transform: 'scale(0)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+              draw: {
+                '0%': { strokeDasharray: '100', strokeDashoffset: '100' },
+                '100%': { strokeDashoffset: '0' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #19241B;
+        color: #FFFFFF;
+        overflow: hidden; /* No scrollbars per requirement */
+        height: 100vh; /* Fallback */
+        height: 100dvh; /* Dynamic viewport height */
+      }
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      .no-scrollbar::-webkit-scrollbar {
+          display: none;
+      }
+      /* Hide scrollbar for IE, Edge and Firefox */
+      .no-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+      }
+      
+      /* Custom utility for animation delays since Tailwind doesn't include them by default */
+      .animation-delay-2000 {
+        animation-delay: 2s; 
+      }
+      .animation-delay-4000 {
+        animation-delay: 4s; 
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
