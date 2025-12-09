@@ -77,7 +77,8 @@ export const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
           strokeDasharray={perimeter}
           strokeDashoffset={strokeDashoffset}
           filter="url(#neon-glow)"
-          style={{ transition: 'stroke-dashoffset 0.8s ease-out' }} // Transição suave via CSS
+          // Increased duration to 2.5s and used cubic-bezier for a smoother, less robotic movement
+          style={{ transition: 'stroke-dashoffset 2.5s cubic-bezier(0.4, 0, 0.2, 1)' }} 
         />
       </svg>
     </div>

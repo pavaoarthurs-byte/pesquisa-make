@@ -76,9 +76,9 @@ export const validateCpfCnpj = (value: string): boolean => {
 export const validatePhone = (phone: string): { isValid: boolean; message?: string } => {
   const cleanPhone = cleanString(phone);
 
-  // Check length (Mobile: 11 digits, Landline: 10 digits)
-  if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-    return { isValid: false, message: "O telefone deve ter 10 ou 11 dígitos." };
+  // Check strict length (Must be 11 digits: DDD + 9 + 8 digits)
+  if (cleanPhone.length !== 11) {
+    return { isValid: false, message: "O telefone deve ter 11 dígitos (DDD + 9 + Número)." };
   }
 
   // Check DDD (First 2 digits)
@@ -87,8 +87,12 @@ export const validatePhone = (phone: string): { isValid: boolean; message?: stri
     return { isValid: false, message: `DDD ${ddd} inválido.` };
   }
 
+  // Check if the 3rd digit is 9 (Standard for mobile in Brazil)
+  if (cleanPhone[2] !== '9') {
+     return { isValid: false, message: "O número de celular deve começar com 9." };
+  }
+
   // Check for sequence of 5 or more identical digits
-  // Regex matches any digit captured in group 1, followed by that same digit 4 or more times
   const sequenceRegex = /(\d)\1{4,}/;
   if (sequenceRegex.test(cleanPhone)) {
     return { isValid: false, message: "Número inválido: sequência de números repetidos detectada." };
