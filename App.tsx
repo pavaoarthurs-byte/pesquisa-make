@@ -432,8 +432,8 @@ const App: React.FC = () => {
         {step !== SurveyStep.INTRO && step !== SurveyStep.FINAL && (
           <div className="w-full pt-4 md:pt-6 pb-2 shrink-0 flex flex-col items-center min-h-[5rem]">
              <div className="mb-1 w-full flex justify-center">
-               {/* Increased Logo Size from h-10/14 to h-16/20 for better visibility */}
-               <MakeLogo className="h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
+               {/* Increased Logo Size from h-16/20 to h-24/32 for better visibility and filling space */}
+               <MakeLogo className="h-24 md:h-32 w-auto object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
              </div>
              
              {/* Error Message Display Area - Replacing previous Header Text */}
