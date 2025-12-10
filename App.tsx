@@ -175,7 +175,7 @@ const App: React.FC = () => {
     switch (step) {
       case SurveyStep.INTRO:
         return (
-          <div className="flex flex-col items-center text-center h-full justify-center animate-fade-in px-4">
+          <div className="flex flex-col items-center text-center h-full justify-center animate-fade-in px-4 relative z-20">
              
              {/* Logo Container with Intense Glow Effects */}
              <div className="mb-8 md:mb-12 p-6 relative group">
@@ -369,7 +369,7 @@ const App: React.FC = () => {
         );
       case SurveyStep.FINAL:
         return (
-          <div className="flex flex-col items-center justify-center text-center h-full animate-fade-in py-6 md:py-10">
+          <div className="flex flex-col items-center justify-center text-center h-full animate-fade-in py-6 md:py-10 relative z-20">
             <div className="w-16 h-16 md:w-24 md:h-24 bg-make-primary rounded-full flex items-center justify-center mb-4 md:mb-8 shadow-[0_0_30px_rgba(203,245,66,0.6)] animate-scale-in">
                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 md:h-12 md:w-12 text-make-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                 <path 
@@ -430,15 +430,18 @@ const App: React.FC = () => {
         
         {/* Header Section - Hide on Intro and Final */}
         {step !== SurveyStep.INTRO && step !== SurveyStep.FINAL && (
-          <div className="w-full pt-4 md:pt-6 pb-2 shrink-0 flex flex-col items-center min-h-[5rem]">
-             <div className="mb-1 w-full flex justify-center">
-               {/* Increased Logo Size from h-10/14 to h-16/20 for better visibility */}
-               <MakeLogo className="h-16 md:h-20 w-auto object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
+          // Added 'relative z-0 pointer-events-none' to ensure logo doesn't block clicks in the negative margin area
+          <div className="w-full pt-4 md:pt-6 pb-2 shrink-0 flex flex-col items-center min-h-[5rem] relative z-0 pointer-events-none">
+             {/* Added Negative Margin (-mb-12 md:-mb-24) to pull content UP over the transparent logo pixels */}
+             <div className="mb-1 w-full flex justify-center -mb-12 md:-mb-24">
+               {/* Updated Logo Size: h-32 (128px) on mobile, h-52 (208px) on desktop. Max width to prevent overflow. */}
+               <MakeLogo className="h-32 sm:h-40 md:h-52 w-auto max-w-[85%] object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
              </div>
              
              {/* Error Message Display Area - Replacing previous Header Text */}
+             {/* 'pointer-events-auto z-50' to allow interaction and visibility even if header is none */}
              {error ? (
-                <div className="animate-fade-in bg-red-500/10 border border-red-500/20 text-red-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold flex items-center shadow-[0_0_15px_rgba(220,38,38,0.2)]">
+                <div className="relative z-50 pointer-events-auto animate-fade-in bg-red-500/10 border border-red-500/20 text-red-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold flex items-center shadow-[0_0_15px_rgba(220,38,38,0.2)] mt-8 md:mt-16">
                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                    </svg>
@@ -451,8 +454,8 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {/* Dynamic Content Area */}
-        <div className="flex-1 flex flex-col justify-center relative w-full overflow-y-auto no-scrollbar py-2">
+        {/* Dynamic Content Area - Added 'z-20 pointer-events-auto' to ensure text sits ON TOP of the logo transparency */}
+        <div className="flex-1 flex flex-col justify-center relative w-full overflow-y-auto no-scrollbar py-2 z-20 pointer-events-auto">
           <div key={step} className="animate-fade-in-up w-full my-auto">
             {renderContent()}
           </div>
@@ -460,7 +463,7 @@ const App: React.FC = () => {
 
         {/* Footer Actions */}
         {step !== SurveyStep.INTRO && step !== SurveyStep.FINAL && (
-          <div className="w-full pt-2 pb-4 md:pt-4 md:pb-6 shrink-0 animate-fade-in flex gap-3">
+          <div className="w-full pt-2 pb-4 md:pt-4 md:pb-6 shrink-0 animate-fade-in flex gap-3 relative z-30">
             
             {/* Show Back Button on CPF screen and onwards */}
             {(step >= SurveyStep.CPF_CNPJ) && (
