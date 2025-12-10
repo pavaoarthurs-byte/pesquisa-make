@@ -30,6 +30,18 @@ const MakeLogo = ({ className }: { className?: string }) => (
   />
 );
 
+const InlineError = ({ message }: { message: string | null }) => {
+  if (!message) return null;
+  return (
+    <div className="animate-fade-in mt-3 w-full p-3 rounded-xl bg-red-900/40 border border-red-500/30 text-red-200 text-xs md:text-sm font-medium flex items-center shadow-[0_4px_12px_rgba(0,0,0,0.2)] backdrop-blur-sm">
+       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg>
+       {message}
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [step, setStep] = useState<SurveyStep>(SurveyStep.INTRO);
   const [loading, setLoading] = useState(false);
@@ -239,6 +251,7 @@ const App: React.FC = () => {
               maxLength={18}
             />
             <p className="text-gray-400 text-[10px] md:text-xs mt-2 ml-1">Digite apenas números.</p>
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.NOME:
@@ -254,6 +267,7 @@ const App: React.FC = () => {
               value={data.nome}
               onChange={(e) => updateData('nome', e.target.value)}
             />
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.TELEFONE:
@@ -271,6 +285,7 @@ const App: React.FC = () => {
               maxLength={15} 
             />
             <p className="text-gray-400 text-[10px] md:text-xs mt-2 ml-1">DDD + 9 + Número</p>
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.NOTA_ATENDIMENTO:
@@ -281,10 +296,12 @@ const App: React.FC = () => {
             </h1>
             <RatingGrid 
               value={data.notaAtendimento} 
-              onChange={(val) => updateData('notaAtendimento', val)} 
+              // Deselect if clicked again
+              onChange={(val) => updateData('notaAtendimento', data.notaAtendimento === val ? null : val)} 
               minLabel="Muito Insatisfeito"
               maxLabel="Muito Satisfeito"
             />
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.NOTA_TEMPO:
@@ -295,10 +312,12 @@ const App: React.FC = () => {
             </h1>
             <RatingGrid 
               value={data.notaTempoEspera} 
-              onChange={(val) => updateData('notaTempoEspera', val)} 
+              // Deselect if clicked again
+              onChange={(val) => updateData('notaTempoEspera', data.notaTempoEspera === val ? null : val)} 
               minLabel="Muito Insatisfeito"
               maxLabel="Muito Satisfeito"
             />
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.NOTA_RECOMENDACAO:
@@ -309,10 +328,12 @@ const App: React.FC = () => {
             </h1>
             <RatingGrid 
               value={data.notaRecomendacao} 
-              onChange={(val) => updateData('notaRecomendacao', val)} 
+              // Deselect if clicked again
+              onChange={(val) => updateData('notaRecomendacao', data.notaRecomendacao === val ? null : val)} 
               minLabel="Não Recomendaria"
               maxLabel="Com Certeza"
             />
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.MELHOR_COISA:
@@ -332,7 +353,8 @@ const App: React.FC = () => {
                   key={opt} 
                   variant="option" 
                   isActive={data.melhorCoisa === opt}
-                  onClick={() => updateData('melhorCoisa', opt)}
+                  // Toggle logic: deselect if already active
+                  onClick={() => updateData('melhorCoisa', data.melhorCoisa === opt ? '' : opt)}
                 >
                   {opt}
                 </Button>
@@ -349,6 +371,7 @@ const App: React.FC = () => {
                 className="py-2 md:py-3 text-base"
               />
             </div>
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.PIOR_COISA:
@@ -356,14 +379,14 @@ const App: React.FC = () => {
         const worstOptions = [...worstOptionsList, "Nada"];
         const uniqueWorstOptions = Array.from(new Set(worstOptions));
         
-        // Defines the specific red color from the Rating Scale 1 (Hue 0, Sat 90%, Light 60%)
-        const RED_COLOR = "hsl(0, 90%, 60%)";
+        // Defines a more subtle red color (was 90% saturation, now lower; higher lightness)
+        const RED_COLOR = "hsl(0, 65%, 65%)";
 
         return (
           <>
             <h1 className="text-base sm:text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white leading-tight">
-              {/* Changed text color to RED and adjusted shadow */}
-              {prefix}Em uma palavra, qual foi a <span className="text-[hsl(0,90%,60%)] drop-shadow-[0_0_10px_rgba(220,38,38,0.5)]">pior coisa</span> de ter optado pela MAKE Distribuidora?
+              {/* Changed text color to SUBTLE RED and adjusted shadow */}
+              {prefix}Em uma palavra, qual foi a <span className="text-[hsl(0,65%,65%)] drop-shadow-[0_0_8px_rgba(220,38,38,0.3)]">pior coisa</span> de ter optado pela MAKE Distribuidora?
             </h1>
             <div className="grid grid-cols-2 gap-2 md:gap-4 w-full mb-4">
               {uniqueWorstOptions.map(opt => (
@@ -371,9 +394,12 @@ const App: React.FC = () => {
                   key={opt} 
                   variant="option" 
                   isActive={data.piorCoisa === opt}
-                  onClick={() => updateData('piorCoisa', opt)}
+                  // Toggle logic: deselect if already active
+                  onClick={() => updateData('piorCoisa', data.piorCoisa === opt ? '' : opt)}
                   // If option is "Nada", keep default (Green). Otherwise, force Red.
                   dynamicColor={opt === "Nada" ? undefined : RED_COLOR}
+                  // Added extra height and padding for this specific step
+                  className="min-h-[3.5rem] py-4 md:py-5"
                 >
                   {opt}
                 </Button>
@@ -390,6 +416,7 @@ const App: React.FC = () => {
                 className="py-2 md:py-3 text-base"
               />
             </div>
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.SUGESTAO:
@@ -405,6 +432,7 @@ const App: React.FC = () => {
               value={data.sugestao}
               onChange={(e) => updateData('sugestao', e.target.value)}
             />
+            <InlineError message={error} />
           </>
         );
       case SurveyStep.FINAL:
@@ -477,20 +505,8 @@ const App: React.FC = () => {
                {/* Updated Logo Size: h-32 (128px) on mobile, h-52 (208px) on desktop. Max width to prevent overflow. */}
                <MakeLogo className="h-32 sm:h-40 md:h-52 w-auto max-w-[85%] object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
              </div>
-             
-             {/* Error Message Display Area - Replacing previous Header Text */}
-             {/* 'pointer-events-auto z-50' to allow interaction and visibility even if header is none */}
-             {error ? (
-                <div className="relative z-50 pointer-events-auto animate-fade-in bg-red-500/10 border border-red-500/20 text-red-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold flex items-center shadow-[0_0_15px_rgba(220,38,38,0.2)] mt-8 md:mt-16">
-                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                   </svg>
-                   {error}
-                </div>
-             ) : (
-                // Spacer to keep layout stable if needed, or just empty
-                <div className="h-8"></div>
-             )}
+             {/* Removed header error display, now inline */}
+             <div className="h-8"></div>
           </div>
         )}
 
