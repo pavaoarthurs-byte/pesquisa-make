@@ -17,19 +17,15 @@ export const RatingGrid: React.FC<RatingGridProps> = ({
 }) => {
   
   const getGradientColor = (num: number) => {
-    // 1 -> 0 deg (Red)
-    // 10 -> 74 deg (Brand Green)
     const minHue = 0;
     const maxHue = 74;
     const hue = minHue + ((num - 1) * (maxHue - minHue) / 9);
-    
     return `hsl(${hue}, 90%, 60%)`;
   };
 
   return (
     <div className="w-full">
-      {/* Reduced Gap for tighter layout */}
-      <div className="grid grid-cols-5 gap-1.5 sm:gap-2 w-full">
+      <div className="grid grid-cols-5 gap-1.5 w-full">
         {RATING_SCALE.map((num) => (
           <Button
             key={num}
@@ -37,11 +33,9 @@ export const RatingGrid: React.FC<RatingGridProps> = ({
             isActive={value === num}
             onClick={() => onChange(num)}
             dynamicColor={getGradientColor(num)}
-            // COMPACT SIZING:
-            // Height reduced: h-9/11/14 -> h-8/10/12
-            // Font standardized via Button component, but explicit override here if needed
+            // Altura reduzida (h-9) para caber melhor em telas curtas
             className={`
-              h-8 sm:h-10 md:h-12 
+              h-9 sm:h-10 md:h-12 
               w-full p-0 flex items-center justify-center
               ${value === num ? 'scale-[1.02] z-10' : ''}
             `}

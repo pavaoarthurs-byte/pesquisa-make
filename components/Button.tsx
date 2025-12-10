@@ -18,7 +18,8 @@ export const Button: React.FC<ButtonProps> = ({
   // UNIFORM TYPOGRAPHY & BASE STYLE
   // Changed to text-sm md:text-base for consistency across all buttons
   // Added min-h to ensure touch targets remain accessible despite smaller visual size
-  const baseStyle = "relative z-10 transition-all duration-200 ease-out rounded-xl font-semibold tracking-wide flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-make-primary/50 text-sm md:text-base";
+  // Added whitespace-normal, break-words, text-center, and leading-tight to handle long text gracefully
+  const baseStyle = "relative z-10 transition-all duration-200 ease-out rounded-xl font-semibold tracking-wide flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-make-primary/50 text-sm md:text-base whitespace-normal break-words text-center leading-tight";
   
   let variantStyle = "";
   
@@ -63,14 +64,14 @@ export const Button: React.FC<ButtonProps> = ({
       } 
       else {
         // Text Choices (Melhor/Pior/Etc) without dynamic color
-        // Reduced padding significantly for a sleeker look
+        // Reduced padding significantly (px-2 md:px-4) to prevent overflow on mobile with long text
         const activeClasses = isActive 
           ? "bg-gradient-to-br from-make-primary to-make-auxiliary border-make-primary text-make-dark shadow-[0_0_15px_rgba(203,245,66,0.3),inset_0_1px_5px_rgba(255,255,255,0.3)] scale-[1.02] -translate-y-0.5"
           : "bg-white/5 text-gray-100 border-white/10 shadow-[0_2px_4px_rgba(0,0,0,0.2)] drop-shadow-sm hover:border-make-primary/50 hover:text-white hover:bg-white/10 hover:shadow-[0_0_10px_rgba(203,245,66,0.15)] hover:scale-[1.01]";
         
         const clickFeedback = "active:scale-[0.98] active:duration-75 active:brightness-110 active:translate-y-0";
 
-        variantStyle = `border py-2.5 px-3 md:py-3 md:px-5 backdrop-blur-md ${activeClasses} ${clickFeedback}`;
+        variantStyle = `border py-2.5 px-2 md:py-3 md:px-4 backdrop-blur-md ${activeClasses} ${clickFeedback}`;
       }
       break;
 
