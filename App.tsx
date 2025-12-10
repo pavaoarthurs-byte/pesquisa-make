@@ -305,11 +305,14 @@ const App: React.FC = () => {
       case SurveyStep.PIOR_COISA:
         const worstOptions = [...worstOptionsList, "Nada"];
         const uniqueWorstOptions = Array.from(new Set(worstOptions));
-        const RED_COLOR = "hsl(0, 65%, 65%)";
+        // Stronger/Bolder Red: #FF4D4D. 
+        // More vivid than previous coral, but not eye-bleeding neon. Good contrast with Green.
+        const RED_COLOR = "#FF4D4D"; 
+        
         return (
           <>
             <h1 className={titleClass}>
-              Em uma palavra, qual foi a <span className="text-[hsl(0,65%,65%)] drop-shadow-red-glow">pior coisa</span> de ter optado pela MAKE Distribuidora?
+              Em uma palavra, qual foi a <span className="text-[#FF4D4D] drop-shadow-[0_0_15px_rgba(255,77,77,0.4)]">pior coisa</span> de ter optado pela MAKE Distribuidora?
             </h1>
             <div className="grid grid-cols-2 gap-2 w-full mb-2 relative z-30">
               {uniqueWorstOptions.map(opt => (
