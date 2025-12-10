@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { SurveyData, SurveyStep } from './types';
 import { BEST_THING_OPTIONS, WORST_THING_OPTIONS } from './constants';
@@ -21,7 +22,7 @@ const INITIAL_DATA: SurveyData = {
   sugestao: ''
 };
 
-const MakeLogo = ({ className }: { className?: string }) => (
+const MakeLogo = ({ className = '' }: { className?: string }) => (
   <img 
     src="logo.png" 
     alt="MAKE Distribuidora" 
@@ -153,7 +154,7 @@ const App: React.FC = () => {
     setData({ ...data, nome: validValue });
   };
 
-  const updateData = (field: keyof SurveyData, value: any) => {
+  const updateData = <K extends keyof SurveyData>(field: K, value: SurveyData[K]) => {
     if (error) setError(null);
     setData({ ...data, [field]: value });
   };
@@ -170,7 +171,7 @@ const App: React.FC = () => {
              <div className="mb-6 md:mb-10 relative group">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-make-primary/20 rounded-full blur-[30px] animate-pulse"></div>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white/5 rounded-full blur-[15px]"></div>
-                <MakeLogo className="h-24 md:h-32 lg:h-40 w-auto relative z-10 drop-shadow-[0_0_15px_rgba(203,245,66,0.5)] animate-float" />
+                <MakeLogo className="h-40 md:h-52 lg:h-64 w-auto relative z-10 drop-shadow-[0_0_15px_rgba(203,245,66,0.5)] animate-float" />
              </div>
              
              <h1 className="text-2xl md:text-4xl font-bold text-white mb-4 leading-tight drop-shadow-md">

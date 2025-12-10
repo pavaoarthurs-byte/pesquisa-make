@@ -1,3 +1,4 @@
+
 body {
   background-color: #19241B;
   color: #FFFFFF;
@@ -17,12 +18,4 @@ body {
 .no-scrollbar {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
-}
-
-/* Custom utility for animation delays since Tailwind doesn't include them by default */
-.animation-delay-2000 {
-  animation-delay: 2s; 
-}
-.animation-delay-4000 {
-  animation-delay: 4s; 
 }
