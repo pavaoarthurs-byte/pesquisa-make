@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SurveyData, SurveyStep } from './types';
 import { BEST_THING_OPTIONS, WORST_THING_OPTIONS } from './constants';
-import { submitSurvey } from './services/sheetService';
+import { submitSurvey, fetchTopKeywords } from './services/sheetService';
 import { Button } from './components/Button';
 import { Input } from './components/Input';
 import { RatingGrid } from './components/RatingGrid';
@@ -35,6 +35,27 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<SurveyData>(INITIAL_DATA);
   const [error, setError] = useState<string | null>(null);
+
+  // Dynamic Options States
+  const [bestOptionsList, setBestOptionsList] = useState<string[]>(BEST_THING_OPTIONS);
+  const [worstOptionsList, setWorstOptionsList] = useState<string[]>(WORST_THING_OPTIONS);
+
+  // Load dynamic keywords on mount
+  useEffect(() => {
+    const loadKeywords = async () => {
+      const keywords = await fetchTopKeywords();
+      if (keywords) {
+        // Only update if we received valid lists (and they are not empty)
+        if (keywords.best && keywords.best.length > 0) {
+          setBestOptionsList(keywords.best);
+        }
+        if (keywords.worst && keywords.worst.length > 0) {
+          setWorstOptionsList(keywords.worst);
+        }
+      }
+    };
+    loadKeywords();
+  }, []);
 
   // Calculate progress relative to questions (Step 3 to 8)
   // Step 3 (Atendimento) -> 0%
@@ -261,6 +282,8 @@ const App: React.FC = () => {
             <RatingGrid 
               value={data.notaAtendimento} 
               onChange={(val) => updateData('notaAtendimento', val)} 
+              minLabel="Muito Insatisfeito"
+              maxLabel="Muito Satisfeito"
             />
           </>
         );
@@ -273,6 +296,8 @@ const App: React.FC = () => {
             <RatingGrid 
               value={data.notaTempoEspera} 
               onChange={(val) => updateData('notaTempoEspera', val)} 
+              minLabel="Muito Insatisfeito"
+              maxLabel="Muito Satisfeito"
             />
           </>
         );
@@ -285,18 +310,24 @@ const App: React.FC = () => {
             <RatingGrid 
               value={data.notaRecomendacao} 
               onChange={(val) => updateData('notaRecomendacao', val)} 
+              minLabel="Não Recomendaria"
+              maxLabel="Com Certeza"
             />
           </>
         );
       case SurveyStep.MELHOR_COISA:
-        const bestOptions = [...BEST_THING_OPTIONS, "Nada"];
+        // Use dynamic list fetched from Sheets, or fallback to constants
+        const bestOptions = [...bestOptionsList, "Nada"];
+        // Ensure "Nada" is unique if backend sent it (Set removes duplicates)
+        const uniqueBestOptions = Array.from(new Set(bestOptions));
+
         return (
           <>
             <h1 className="text-base sm:text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white leading-tight">
               {prefix}Em uma palavra, qual foi a <span className="text-make-primary drop-shadow-[0_0_10px_rgba(203,245,66,0.3)]">melhor coisa</span> de ter optado pela MAKE Distribuidora!
             </h1>
             <div className="grid grid-cols-2 gap-2 md:gap-4 w-full mb-4">
-              {bestOptions.map(opt => (
+              {uniqueBestOptions.map(opt => (
                 <Button 
                   key={opt} 
                   variant="option" 
@@ -312,7 +343,7 @@ const App: React.FC = () => {
               <Input
                 placeholder="Digite outra opção..."
                 // Show value only if it's NOT in the predefined options list to avoid visual duplication
-                value={bestOptions.includes(data.melhorCoisa) ? '' : data.melhorCoisa}
+                value={uniqueBestOptions.includes(data.melhorCoisa) ? '' : data.melhorCoisa}
                 onChange={(e) => updateData('melhorCoisa', e.target.value)}
                 maxLength={20}
                 className="py-2 md:py-3 text-base"
@@ -321,19 +352,28 @@ const App: React.FC = () => {
           </>
         );
       case SurveyStep.PIOR_COISA:
-        const worstOptions = [...WORST_THING_OPTIONS, "Nada"];
+        // Use dynamic list fetched from Sheets
+        const worstOptions = [...worstOptionsList, "Nada"];
+        const uniqueWorstOptions = Array.from(new Set(worstOptions));
+        
+        // Defines the specific red color from the Rating Scale 1 (Hue 0, Sat 90%, Light 60%)
+        const RED_COLOR = "hsl(0, 90%, 60%)";
+
         return (
           <>
             <h1 className="text-base sm:text-xl md:text-2xl font-bold mb-4 md:mb-6 text-white leading-tight">
-              {prefix}Em uma palavra, qual foi a <span className="text-make-primary drop-shadow-[0_0_10px_rgba(203,245,66,0.3)]">pior coisa</span> de ter optado pela MAKE Distribuidora?
+              {/* Changed text color to RED and adjusted shadow */}
+              {prefix}Em uma palavra, qual foi a <span className="text-[hsl(0,90%,60%)] drop-shadow-[0_0_10px_rgba(220,38,38,0.5)]">pior coisa</span> de ter optado pela MAKE Distribuidora?
             </h1>
             <div className="grid grid-cols-2 gap-2 md:gap-4 w-full mb-4">
-              {worstOptions.map(opt => (
+              {uniqueWorstOptions.map(opt => (
                 <Button 
                   key={opt} 
                   variant="option" 
                   isActive={data.piorCoisa === opt}
                   onClick={() => updateData('piorCoisa', opt)}
+                  // If option is "Nada", keep default (Green). Otherwise, force Red.
+                  dynamicColor={opt === "Nada" ? undefined : RED_COLOR}
                 >
                   {opt}
                 </Button>
@@ -344,7 +384,7 @@ const App: React.FC = () => {
               <Input
                 placeholder="Digite outra opção..."
                 // Show value only if it's NOT in the predefined options list
-                value={worstOptions.includes(data.piorCoisa) ? '' : data.piorCoisa}
+                value={uniqueWorstOptions.includes(data.piorCoisa) ? '' : data.piorCoisa}
                 onChange={(e) => updateData('piorCoisa', e.target.value)}
                 maxLength={20}
                 className="py-2 md:py-3 text-base"

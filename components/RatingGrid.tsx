@@ -5,9 +5,16 @@ import { RATING_SCALE } from '../constants';
 interface RatingGridProps {
   value: number | null;
   onChange: (val: number) => void;
+  minLabel?: string;
+  maxLabel?: string;
 }
 
-export const RatingGrid: React.FC<RatingGridProps> = ({ value, onChange }) => {
+export const RatingGrid: React.FC<RatingGridProps> = ({ 
+  value, 
+  onChange,
+  minLabel = "Muito Insatisfeito", // Default value
+  maxLabel = "Muito Satisfeito"   // Default value
+}) => {
   
   // Interpolates between Red (Hue 0) and Brand Green (Hue ~74)
   // Saturation 90%, Lightness 60% (matches closely with #CBF542 which is ~74, 90, 61)
@@ -46,13 +53,13 @@ export const RatingGrid: React.FC<RatingGridProps> = ({ value, onChange }) => {
           </Button>
         ))}
       </div>
-      <div className="flex justify-between items-center text-[10px] md:text-sm font-medium text-gray-400 mt-3 md:mt-4 px-1">
+      <div className="flex justify-between items-center text-[10px] md:text-sm font-medium text-gray-400 mt-3 md:mt-4 px-1 uppercase tracking-wide">
         <span className="flex items-center gap-1 md:gap-2">
           <span className="block w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shadow-[0_0_8px_red]" style={{ backgroundColor: 'hsl(0, 90%, 60%)' }}></span>
-          Muito Insatisfeito
+          {minLabel}
         </span>
-        <span className="flex items-center gap-1 md:gap-2">
-          Muito Satisfeito
+        <span className="flex items-center gap-1 md:gap-2 text-right">
+          {maxLabel}
           <span className="block w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shadow-[0_0_8px_#CBF542]" style={{ backgroundColor: '#CBF542' }}></span>
         </span>
       </div>

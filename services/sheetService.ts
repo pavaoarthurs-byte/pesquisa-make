@@ -1,6 +1,7 @@
 
 import { SurveyData, SheetPayload } from '../types';
 import { GOOGLE_SCRIPT_URL } from '../constants';
+import { toSentenceCase } from '../utils/formatters';
 
 // Função segura para gerar UUID em qualquer ambiente (HTTP ou HTTPS)
 const generateUUID = () => {
@@ -50,5 +51,57 @@ export const submitSurvey = async (data: SurveyData): Promise<boolean> => {
     // Retornamos true mesmo com erro para não travar o fluxo do usuário na tela final
     // Em produção, você poderia salvar no localStorage para tentar enviar depois
     return false;
+  }
+};
+
+const processKeywords = (words: string[]): string[] => {
+  if (!Array.isArray(words)) return [];
+  
+  const uniqueMap = new Map<string, string>();
+  
+  words.forEach(word => {
+    if (typeof word === 'string' && word.trim().length > 0) {
+      // Formata: "aGiLiDaDe" -> "Agilidade"
+      const formatted = toSentenceCase(word);
+      // Chave em minúsculo para garantir unicidade sem case-sensitivity
+      const key = formatted.toLowerCase();
+      
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, formatted);
+      }
+    }
+  });
+
+  return Array.from(uniqueMap.values());
+};
+
+export const fetchTopKeywords = async (): Promise<{ best: string[], worst: string[] } | null> => {
+  try {
+    // Para requisições GET no Apps Script (Web App), é crucial:
+    // 1. redirect: 'follow' (padrão) para seguir o 302 do Google.
+    // 2. credentials: 'omit' para não enviar cookies que possam confundir a auth do Google.
+    // 3. mode: 'cors' explícito.
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit', 
+      redirect: 'follow'
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.result === 'success') {
+        // Processa as listas para garantir formatação e unicidade no Frontend
+        return {
+          best: processKeywords(data.best),
+          worst: processKeywords(data.worst)
+        };
+      }
+    }
+    return null;
+  } catch (error) {
+    // Usar warn em vez de error para não alarmar no console, pois é uma feature opcional
+    console.warn("Aviso: Não foi possível carregar as palavras-chave dinâmicas (usando padrão). Se você atualizou o Apps Script, certifique-se de ter criado uma NOVA VERSÃO na implantação.", error);
+    return null;
   }
 };
