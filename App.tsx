@@ -397,19 +397,14 @@ const App: React.FC = () => {
       <div className="flex flex-col h-full w-full max-w-3xl mx-auto px-4 md:px-6 relative z-10">
         
         {step !== SurveyStep.INTRO && step !== SurveyStep.FINAL && (
-          // Header Section: Height based on Viewport Height (vh) to scale with screen
-          <div className="shrink-0 flex flex-col items-center justify-end relative z-0 pointer-events-none h-[22vh] min-h-[120px] max-h-[220px]">
-             {/* Logo container using absolute positioning to overlap content slightly via negative margin effect logic, but controlled */}
-             <div className="w-full flex justify-center items-end h-full pb-2">
-               {/* Logo scales with height of container */}
-               <MakeLogo className="h-[80%] w-auto max-w-[80%] object-contain drop-shadow-md" />
-             </div>
+          // Header Section: Matches Intro size
+          <div className="shrink-0 flex flex-col items-center justify-center relative z-0 pointer-events-none py-2 md:py-4">
+             <MakeLogo className="h-40 md:h-52 lg:h-64 w-auto object-contain drop-shadow-[0_0_15px_rgba(203,245,66,0.5)] animate-float" />
           </div>
         )}
 
         {/* Content Section: Flex-1 fills available space. Justify-center puts inputs in the middle. */}
-        {/* -mt-6 pulls content up over the "empty" space of the logo if needed */}
-        <div className={`flex-1 flex flex-col justify-center w-full relative z-20 pointer-events-auto ${step !== SurveyStep.INTRO ? '-mt-4 md:-mt-8' : ''}`}>
+        <div className={`flex-1 flex flex-col justify-center w-full relative z-20 pointer-events-auto`}>
           <div key={step} className="animate-fade-in-up w-full">
             {renderContent()}
           </div>
