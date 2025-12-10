@@ -183,7 +183,7 @@ const App: React.FC = () => {
              </p>
 
              <Button onClick={handleNext} className="w-full md:w-auto px-10 py-3 md:py-4 text-base md:text-lg shadow-[0_0_20px_rgba(203,245,66,0.3)] animate-fade-in-up">
-               Iniciar
+               Avaliar
              </Button>
           </div>
         );
@@ -397,14 +397,17 @@ const App: React.FC = () => {
       <div className="flex flex-col h-full w-full max-w-3xl mx-auto px-4 md:px-6 relative z-10">
         
         {step !== SurveyStep.INTRO && step !== SurveyStep.FINAL && (
-          // Header Section: Matches Intro size
+          // Header Section: Updated size (approx 40% smaller than Intro)
+          // Intro was h-40 md:h-52 lg:h-64
+          // New size is h-24 md:h-32 lg:h-40
           <div className="shrink-0 flex flex-col items-center justify-center relative z-0 pointer-events-none py-2 md:py-4">
-             <MakeLogo className="h-40 md:h-52 lg:h-64 w-auto object-contain drop-shadow-[0_0_15px_rgba(203,245,66,0.5)] animate-float" />
+             <MakeLogo className="h-24 md:h-32 lg:h-40 w-auto object-contain drop-shadow-[0_0_15px_rgba(203,245,66,0.5)] animate-float" />
           </div>
         )}
 
         {/* Content Section: Flex-1 fills available space. Justify-center puts inputs in the middle. */}
-        <div className={`flex-1 flex flex-col justify-center w-full relative z-20 pointer-events-auto`}>
+        {/* lg:-mt-8 pulls content up to overlap logo on desktop without scrolling */}
+        <div className={`flex-1 flex flex-col justify-center w-full relative z-20 pointer-events-auto lg:-mt-8`}>
           <div key={step} className="animate-fade-in-up w-full">
             {renderContent()}
           </div>
