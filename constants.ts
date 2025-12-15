@@ -1,4 +1,3 @@
-
 export const BEST_THING_OPTIONS = [
   "Atendimento",
   "Agilidade",

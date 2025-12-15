@@ -1,4 +1,3 @@
-
 export interface SurveyData {
   cpfCnpj: string;
   nome: string;

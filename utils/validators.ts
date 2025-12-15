@@ -1,4 +1,3 @@
-
 import { VALID_DDDS } from '../constants';
 
 // Remove all non-numeric characters
@@ -76,26 +75,47 @@ export const validateCpfCnpj = (value: string): boolean => {
 export const validatePhone = (phone: string): { isValid: boolean; message?: string } => {
   const cleanPhone = cleanString(phone);
 
-  // Check strict length (Must be 11 digits: DDD + 9 + 8 digits)
-  if (cleanPhone.length !== 11) {
-    return { isValid: false, message: "O telefone deve ter 11 dígitos (DDD + 9 + Número)." };
+  // 1. Verificação de comprimento (Fixo: 10, Móvel: 11)
+  if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+    return { 
+      isValid: false, 
+      message: cleanPhone.length < 10 
+        ? "Telefone incompleto (mínimo 10 dígitos)." 
+        : "Telefone muito longo (máximo 11 dígitos)." 
+    };
   }
 
-  // Check DDD (First 2 digits)
+  // 2. Verificação de dígitos repetidos (ex: 99999999999)
+  if (/^(\d)\1+$/.test(cleanPhone)) {
+    return { isValid: false, message: "Número inválido (todos os dígitos iguais)." };
+  }
+
+  // 3. Validação do DDD
   const ddd = parseInt(cleanPhone.substring(0, 2));
   if (!VALID_DDDS.includes(ddd)) {
-    return { isValid: false, message: `DDD ${ddd} inválido.` };
+    return { isValid: false, message: `DDD ${ddd} desconhecido.` };
   }
 
-  // Check if the 3rd digit is 9 (Standard for mobile in Brazil)
-  if (cleanPhone[2] !== '9') {
-     return { isValid: false, message: "O número de celular deve começar com 9." };
-  }
+  const firstDigit = parseInt(cleanPhone[2]); // O primeiro dígito após o DDD
 
-  // Check for sequence of 5 or more identical digits
-  const sequenceRegex = /(\d)\1{4,}/;
-  if (sequenceRegex.test(cleanPhone)) {
-    return { isValid: false, message: "Número inválido: sequência de números repetidos detectada." };
+  // 4. Lógica para Celular (11 dígitos)
+  if (cleanPhone.length === 11) {
+    if (firstDigit !== 9) {
+      return { isValid: false, message: "Celular deve começar com o dígito 9." };
+    }
+  } 
+  
+  // 5. Lógica para Fixo (10 dígitos)
+  else {
+    // Se tem 10 dígitos mas começa com 9, provavelmente o usuário esqueceu um dígito do celular
+    if (firstDigit === 9) {
+      return { isValid: false, message: "Parece um celular faltando dígito? (11 números)" };
+    }
+    
+    // Telefones fixos no Brasil começam tipicamente de 2 a 5
+    if (firstDigit < 2 || firstDigit > 5) {
+      return { isValid: false, message: "Telefone fixo deve começar com 2, 3, 4 ou 5." };
+    }
   }
 
   return { isValid: true };

@@ -1,4 +1,3 @@
-
 import { SurveyData, SheetPayload } from '../types';
 import { GOOGLE_SCRIPT_URL } from '../constants';
 import { toSentenceCase } from '../utils/formatters';

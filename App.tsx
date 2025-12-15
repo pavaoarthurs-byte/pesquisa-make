@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SurveyData, SurveyStep } from './types';
 import { BEST_THING_OPTIONS, WORST_THING_OPTIONS } from './constants';
 import { submitSurvey, fetchTopKeywords } from './services/sheetService';
@@ -21,6 +20,9 @@ const INITIAL_DATA: SurveyData = {
   piorCoisa: '',
   sugestao: ''
 };
+
+// 5 Minutes in milliseconds
+const INACTIVITY_TIMEOUT = 5 * 60 * 1000;
 
 const MakeLogo = ({ className = '' }: { className?: string }) => (
   <img 
@@ -51,6 +53,9 @@ const App: React.FC = () => {
   const [bestOptionsList, setBestOptionsList] = useState<string[]>(BEST_THING_OPTIONS);
   const [worstOptionsList, setWorstOptionsList] = useState<string[]>(WORST_THING_OPTIONS);
 
+  // Reference for the inactivity timer
+  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     const loadKeywords = async () => {
       const keywords = await fetchTopKeywords();
@@ -61,6 +66,56 @@ const App: React.FC = () => {
     };
     loadKeywords();
   }, []);
+
+  // Inactivity Timer Logic
+  useEffect(() => {
+    // We do not need the timer if we are already at the INTRO screen
+    if (step === SurveyStep.INTRO) {
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+      return;
+    }
+
+    const resetInactivityTimer = () => {
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+
+      inactivityTimerRef.current = setTimeout(() => {
+        // Reset application state due to inactivity
+        setData(INITIAL_DATA);
+        setStep(SurveyStep.INTRO);
+        setError(null);
+        // Optional: console.log("Survey reset due to inactivity");
+      }, INACTIVITY_TIMEOUT);
+    };
+
+    // Events that consider the user "active"
+    const activityEvents = ['mousedown', 'mousemove', 'click', 'keydown', 'scroll', 'touchstart', 'input', 'change'];
+
+    const handleUserActivity = () => {
+      resetInactivityTimer();
+    };
+
+    // Attach listeners
+    activityEvents.forEach(event => {
+      window.addEventListener(event, handleUserActivity);
+    });
+
+    // Start the timer initially when entering a new step (that isn't INTRO)
+    resetInactivityTimer();
+
+    // Cleanup on unmount or step change (back to intro)
+    return () => {
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+      }
+      activityEvents.forEach(event => {
+        window.removeEventListener(event, handleUserActivity);
+      });
+    };
+  }, [step]); // Re-run effect when step changes to enable/disable logic based on INTRO check
 
   const totalQuestions = 5; 
   const currentQuestionIndex = Math.max(0, step - 3);

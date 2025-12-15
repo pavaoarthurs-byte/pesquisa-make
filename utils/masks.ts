@@ -1,4 +1,3 @@
-
 export const maskCpfCnpj = (value: string): string => {
   // Remove non-digits
   let v = value.replace(/\D/g, "");

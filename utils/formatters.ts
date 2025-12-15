@@ -1,4 +1,3 @@
-
 export const toSentenceCase = (str: string): string => {
   if (!str) return "";
   const trimmed = str.trim();
