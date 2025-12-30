@@ -54,7 +54,7 @@ const App: React.FC = () => {
   const [worstOptionsList, setWorstOptionsList] = useState<string[]>(WORST_THING_OPTIONS);
 
   // Reference for the inactivity timer
-  const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const inactivityTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const loadKeywords = async () => {
